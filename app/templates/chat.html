@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toronto Cupcake Chatbot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {"50":"#eff6ff","100":"#dbeafe","200":"#bfdbfe","300":"#93c5fd","400":"#60a5fa","500":"#3b82f6","600":"#2563eb","700":"#1d4ed8","800":"#1e40af","900":"#1e3a8a","950":"#172554"}
+                    }
+                },
+                fontFamily: {
+                    'body': ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'system-ui', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'],
+                    'sans': ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'system-ui', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji']
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-900 text-white font-body" x-data="{ loading: false }">
+    <div class="container mx-auto px-4 py-8 max-w-3xl">
+        <h1 class="text-3xl font-bold mb-6 text-center text-primary-300">Toronto Cupcake Chatbot</h1>
+        
+        <div id="chat-history" class="bg-gray-800 rounded-lg p-4 mb-6 h-96 overflow-y-auto">
+            {% for entry in chat_history %}
+                <div class="mb-4 flex flex-col">
+                    <div class="flex items-start mb-2">
+                        <div class="bg-gray-700 rounded-lg p-2 max-w-[70%]">
+                            <p class="text-gray-300">{{ entry[0] }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-end justify-end mb-2">
+                        <div class="bg-primary-600 rounded-lg p-2 max-w-[70%]">
+                            <p class="text-white">{{ entry[1] }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <form method="post" class="mb-4" @submit="loading = true">
+            <div class="flex flex-col">
+                <textarea id="user_input" name="user_input" required 
+                       class="w-full bg-gray-700 text-white rounded-t-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary-600 resize-none"
+                       placeholder="Type your message here..."
+                       rows="3"></textarea>
+                <button type="submit" 
+                        class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-b-lg transition duration-300">
+                    Send
+                </button>
+            </div>
+        </form>
+        
+        <form action="/clear" method="post" class="text-center">
+            <button type="submit" 
+                    class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+                Clear Chat
+            </button>
+        </form>
+    </div>
+
+    <!-- Loading Modal -->
+    <div x-show="loading" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-gray-800 rounded-lg p-6 flex flex-col items-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500 mb-4"></div>
+            <p class="text-primary-300 font-semibold">Waiting for response...</p>
+        </div>
+    </div>
+
+    <script>
+        function scrollToBottom() {
+            const chatHistory = document.getElementById('chat-history');
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        window.onload = scrollToBottom;
+
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+            scrollToBottom();
+        }
+    </script>
+</body>
+</html>
